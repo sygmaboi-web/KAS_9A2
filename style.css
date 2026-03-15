@@ -1,125 +1,90 @@
-/* Import Font Modern 'Poppins' dari Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 body { 
-    font-family: 'Poppins', sans-serif; 
-    background: #f4f7fe; /* Warna background abu-abu kebiruan yang modern */
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    min-height: 100vh; 
-    margin: 0; 
-    padding: 20px; 
-    box-sizing: border-box; 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    background: #f1f5f9; /* Warna latar aplikasi (Slate 100) */
+    margin: 0; padding: 20px 10px;
+    display: flex; justify-content: center;
 }
 
-.container { 
+.app-container { 
     background: #ffffff; 
-    padding: 40px 30px; 
-    border-radius: 20px; /* Sudut lebih melengkung */
-    box-shadow: 0 10px 30px rgba(112, 144, 176, 0.15); /* Bayangan halus kekinian */
-    width: 100%; 
-    max-width: 650px; 
+    width: 100%; max-width: 600px; 
+    border-radius: 24px; 
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.05); 
+    overflow: hidden;
+    min-height: 80vh;
 }
 
-h2 { 
-    text-align: center; 
-    color: #2b3674; /* Warna biru gelap elegan */
-    margin-top: 0; 
-    margin-bottom: 25px; 
-    font-weight: 600; 
-    letter-spacing: -0.5px;
+/* HEADER & NAVIGASI TAB */
+.header { padding: 25px 25px 0 25px; }
+.header h2 { margin: 0 0 20px 0; color: #0f172a; display: flex; align-items: center; gap: 8px;}
+.header h2 i { color: #3b82f6; }
+
+.tab-nav { 
+    display: flex; background: #f1f5f9; 
+    padding: 6px; border-radius: 16px; margin-bottom: 25px;
 }
-
-/* --- Tombol & Link Interaktif --- */
-.menu-atas { text-align: right; margin-bottom: 20px; }
-
-.btn { 
-    padding: 12px 20px; 
-    border: none; 
-    border-radius: 12px; 
-    cursor: pointer; 
-    font-size: 14px; 
-    font-weight: 500; 
-    color: white; 
-    transition: all 0.3s ease; /* Transisi mulus untuk animasi */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+.tab-btn { 
+    flex: 1; padding: 12px; border: none; background: transparent; 
+    border-radius: 12px; cursor: pointer; font-weight: 600; 
+    color: #64748b; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 6px;
 }
+.tab-btn.active { background: #ffffff; color: #3b82f6; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-.btn:active { transform: scale(0.97); } /* Efek tertekan saat diklik */
+/* KONTEN VIEW */
+.view-section { padding: 0 25px 30px 25px; }
 
-.btn-biru { background: #4318FF; } /* Biru Indigo Modern */
-.btn-biru:hover { 
-    background: #3311db; 
-    box-shadow: 0 6px 15px rgba(67, 24, 255, 0.3); 
-    transform: translateY(-3px); /* Tombol melayang ke atas */
+/* KARTU SALDO */
+.card-saldo {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white; padding: 25px; border-radius: 20px;
+    text-align: center; margin-bottom: 25px;
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
 }
+.card-saldo p { margin: 0; font-size: 14px; opacity: 0.9; }
+.card-saldo h1 { margin: 10px 0 0 0; font-size: 32px; letter-spacing: -1px; }
 
-.btn-hijau { background: #01B574; width: 100%; font-size: 16px; margin-top: 15px; }
-.btn-hijau:hover { 
-    background: #019a62; 
-    box-shadow: 0 6px 15px rgba(1, 181, 116, 0.3); 
-    transform: translateY(-3px); 
-}
+/* HEADER BAGIAN (TEXT & TOMBOL) */
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.section-header h3 { margin: 0; color: #0f172a; font-size: 16px; }
 
-.back-link { 
-    background: none; border: none; color: #4318FF; cursor: pointer; 
-    font-weight: 500; padding: 0; margin-bottom: 20px; text-align: left; 
-    display: inline-block; font-size: 14px; transition: all 0.3s ease; 
-}
-.back-link:hover { 
-    color: #3311db; 
-    transform: translateX(-5px); /* Panah bergerak ke kiri saat dihover */
-}
+/* BADGES (STATUS) */
+.badge { padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+#label-target { color: #3b82f6; }
+.badge.lunas { background: #dcfce7; color: #166534; }
+.badge.kurang { background: #fee2e2; color: #991b1b; }
 
-button:disabled { background-color: #e0e5f2; color: #a3aed1; cursor: not-allowed; box-shadow: none; transform: none; }
-
-/* --- Form Kekinian --- */
-.form-group { margin-bottom: 18px; text-align: left; }
-label { display: block; margin-bottom: 8px; color: #8f9bba; font-weight: 500; font-size: 13px; }
-
-input { 
-    width: 100%; padding: 14px 15px; 
-    border: 1px solid #e0e5f2; border-radius: 12px; 
-    box-sizing: border-box; font-family: 'Poppins', sans-serif; 
-    font-size: 14px; color: #2b3674; background: #f4f7fe; /* Background input soft */
-    transition: all 0.3s ease; 
-}
-/* Efek menyala (glowing) saat sedang mengetik */
-input:focus { 
-    outline: none; border-color: #4318FF; background: #ffffff; 
-    box-shadow: 0 0 0 4px rgba(67, 24, 255, 0.15); 
-}
-input::placeholder { color: #a3aed1; }
-
-.password-group input { border: 1px solid #ff5b5b; background: #fff5f5; }
-.password-group input:focus { border-color: #ff5b5b; box-shadow: 0 0 0 4px rgba(255, 91, 91, 0.15); }
-
-/* --- Tabel Bersih & Modern --- */
-.table-responsive { 
-    overflow-x: auto; 
-    border-radius: 15px; 
-    border: 1px solid #e0e5f2;
-}
-table { width: 100%; border-collapse: collapse; background: white; }
-th, td { padding: 16px; text-align: left; font-size: 14px; border-bottom: 1px solid #f4f7fe; }
-th { background-color: #f8f9fc; color: #8f9bba; font-weight: 500; font-size: 13px; border-bottom: 2px solid #e0e5f2; }
-td { color: #2b3674; font-weight: 500; }
+/* TABEL */
+.table-responsive { overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 16px; }
+table { width: 100%; border-collapse: collapse; text-align: left; }
+th, td { padding: 14px; font-size: 13px; border-bottom: 1px solid #f1f5f9; }
+th { background: #f8fafc; color: #64748b; font-weight: 600; }
+td { color: #334155; }
 tr:last-child td { border-bottom: none; }
-tr:hover td { background-color: #f8f9fc; } /* Warna baris berubah saat kursor lewat */
 
-.loading { text-align: center; font-style: normal; color: #a3aed1; font-weight: 400; }
-
-/* --- Notifikasi dengan Animasi Muncul --- */
-#pesan-notif { 
-    text-align: center; margin-top: 20px; font-weight: 500; display: none; 
-    padding: 15px; border-radius: 12px; font-size: 14px; 
-    animation: munculMulus 0.4s ease; /* Animasi pop-up */
+/* FORM & TOMBOL */
+.form-group { margin-bottom: 18px; }
+label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: #475569; }
+input { 
+    width: 100%; padding: 14px; border: 1px solid #cbd5e1; 
+    border-radius: 12px; font-family: inherit; font-size: 14px; 
+    box-sizing: border-box; background: #f8fafc; transition: 0.3s;
 }
-.sukses { background-color: #e5f9f0; color: #01B574; border: 1px solid #a3e8ca; }
-.gagal { background-color: #ffecec; color: #ff5b5b; border: 1px solid #ffbaba; }
+input:focus { outline: none; border-color: #3b82f6; background: #ffffff; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+.password-group input { border-color: #f87171; background: #fef2f2;}
+.password-group input:focus { border-color: #ef4444; box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1); }
 
-@keyframes munculMulus { 
-    from { opacity: 0; transform: translateY(-10px); } 
-    to { opacity: 1; transform: translateY(0); } 
-}
+.btn { padding: 12px 20px; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; display: flex; align-items: center; gap: 5px; justify-content: center;}
+.btn-sm { padding: 8px 12px; font-size: 13px; border-radius: 8px; }
+.btn-biru { background: #eff6ff; color: #2563eb; } .btn-biru:hover { background: #dbeafe; }
+.btn-hijau { background: #3b82f6; color: white; width: 100%; margin-top: 10px; font-size: 15px; } .btn-hijau:hover { background: #2563eb; }
+
+.back-link { background: none; border: none; color: #64748b; font-weight: 600; cursor: pointer; padding: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 5px;}
+.back-link:hover { color: #0f172a; }
+
+/* NOTIF */
+#pesan-notif { text-align: center; margin-top: 15px; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 600; display: none; }
+.sukses { background: #dcfce7; color: #166534; }
+.gagal { background: #fee2e2; color: #991b1b; }
+.loading { text-align: center; color: #94a3b8; font-style: italic; }
