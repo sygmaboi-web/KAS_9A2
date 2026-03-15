@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Uang Kas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container" id="beranda-container">
+        <h2>Data Uang Kas Kelas</h2>
+        <div class="menu-atas">
+            <button id="btn-tambah" class="btn btn-biru">+ Pemasukan Baru (Admin)</button>
+        </div>
+        
+        <div class="table-responsive">
+            <table id="tabel-kas">
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Nama</th>
+                        <th>Nominal</th>
+                        <th>Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody id="data-kas">
+                    <tr><td colspan="4" class="loading">Memuat data dari server...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="container" id="form-container" style="display: none;">
+        <button id="btn-kembali" class="back-link">⬅ Kembali ke Beranda</button>
+        <h2>Setor Uang Kas</h2>
+        
+        <form id="form-kas">
+            <div class="form-group">
+                <label>Tanggal</label>
+                <input type="date" name="tanggal" required>
+            </div>
+            <div class="form-group">
+                <label>Nama Penyetor</label>
+                <input type="text" name="nama" required>
+            </div>
+            <div class="form-group">
+                <label>Nominal (Rp)</label>
+                <input type="number" name="nominal" required>
+            </div>
+            <div class="form-group">
+                <label>Keterangan</label>
+                <input type="text" name="keterangan" placeholder="Bulan/Minggu ke..." required>
+            </div>
+            <div class="form-group password-group">
+                <label>Password Admin</label>
+                <input type="password" name="password" placeholder="Masukkan sandi..." required>
+            </div>
+            <button type="submit" id="tombol-kirim" class="btn btn-hijau">Simpan Data</button>
+        </form>
+        <div id="pesan-notif"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
