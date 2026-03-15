@@ -23,20 +23,14 @@
                 <p>Total Saldo Kas Kelas</p>
                 <h1 id="total-kas-kelas">Rp 0</h1>
             </div>
-
             <div class="section-header">
                 <h3>Rekap per Siswa</h3>
                 <span class="badge">Target: <span id="label-target"></span></span>
             </div>
-
             <div class="table-responsive">
                 <table>
                     <thead>
-                        <tr>
-                            <th>Nama Siswa</th>
-                            <th>Total Bayar</th>
-                            <th>Status</th>
-                        </tr>
+                        <tr><th>Nama Siswa</th><th>Total Bayar</th><th>Status</th></tr>
                     </thead>
                     <tbody id="data-rekapan">
                         <tr><td colspan="3" class="loading">Memuat rekap data...</td></tr>
@@ -48,36 +42,45 @@
         <div id="riwayat-view" class="view-section" style="display: none;">
             <div class="section-header">
                 <h3>Riwayat Pemasukan</h3>
-                <button class="btn btn-biru btn-sm" onclick="bukaTab('form')"><i class='bx bx-plus'></i> Tambah</button>
+                <button class="btn btn-biru btn-sm" onclick="siapkanFormTambah()"><i class='bx bx-plus'></i> Tambah</button>
             </div>
-            
             <div class="table-responsive">
                 <table>
                     <thead>
-                        <tr>
-                            <th>Tanggal</th>
-                            <th>Nama</th>
-                            <th>Nominal</th>
-                            <th>Ket</th>
-                        </tr>
+                        <tr><th>Tanggal</th><th>Nama</th><th>Nominal</th><th>Pekan</th><th>Aksi</th></tr>
                     </thead>
                     <tbody id="data-riwayat">
-                        <tr><td colspan="4" class="loading">Memuat riwayat...</td></tr>
+                        <tr><td colspan="5" class="loading">Memuat riwayat...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
         <div id="form-view" class="view-section" style="display: none;">
-            <button class="back-link" onclick="bukaTab('riwayat')"><i class='bx bx-left-arrow-alt'></i> Kembali</button>
-            <h3 style="margin-top: 0;">Setor Uang Kas</h3>
+            <button class="back-link" onclick="bukaTab('riwayat')"><i class='bx bx-left-arrow-alt'></i> Batal & Kembali</button>
+            <h3 id="judul-form" style="margin-top: 0;">Setor Uang Kas</h3>
             
             <form id="form-kas">
-                <div class="form-group"><label>Tanggal</label><input type="date" name="tanggal" required></div>
-                <div class="form-group"><label>Nama Penyetor</label><input type="text" name="nama" required></div>
-                <div class="form-group"><label>Nominal (Rp)</label><input type="number" name="nominal" required></div>
-                <div class="form-group"><label>Keterangan</label><input type="text" name="keterangan" placeholder="Bulan ke..." required></div>
-                <div class="form-group password-group"><label>Password Admin</label><input type="password" name="password" placeholder="Masukkan sandi..." required></div>
+                <input type="hidden" name="action" id="form-action" value="insert">
+                <input type="hidden" name="row" id="form-row" value="">
+
+                <div class="form-group"><label>Tanggal</label><input type="date" id="input-tanggal" name="tanggal" required></div>
+                <div class="form-group"><label>Nama Penyetor</label><input type="text" id="input-nama" name="nama" required></div>
+                <div class="form-group"><label>Nominal (Rp)</label><input type="number" id="input-nominal" name="nominal" required></div>
+                
+                <div class="form-group">
+                    <label>Pembayaran Untuk</label>
+                    <select id="input-keterangan" name="keterangan" class="input-select" required>
+                        <option value="" disabled selected>-- Pilih Pekan/Minggu --</option>
+                        <option value="Minggu 1">Minggu 1</option>
+                        <option value="Minggu 2">Minggu 2</option>
+                        <option value="Minggu 3">Minggu 3</option>
+                        <option value="Minggu 4">Minggu 4</option>
+                        <option value="Minggu 5">Minggu 5</option>
+                    </select>
+                </div>
+
+                <div class="form-group password-group"><label>Password Admin</label><input type="password" name="password" id="input-password" placeholder="Masukkan sandi..." required></div>
                 <button type="submit" id="tombol-kirim" class="btn btn-hijau">Simpan Data</button>
             </form>
             <div id="pesan-notif"></div>
