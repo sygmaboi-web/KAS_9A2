@@ -4,30 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kas Kelas 9A2</title>
-    <link rel="stylesheet" href="style.css?v=20260316-1">
+    <link rel="stylesheet" href="style.css?v=20260316-3">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
         <header class="header">
-            <h2><i class="bx bx-wallet"></i> Kas Kelas 9A2</h2>
+            <div class="brand-row">
+                <div class="brand-lockup">
+                    <div class="brand-mark">
+                        <i class="bx bx-wallet-alt"></i>
+                    </div>
+                    <div class="header-copy">
+                        <p class="eyebrow">Dashboard Kas Digital</p>
+                        <h2>Kas Kelas 9A2</h2>
+                        <p class="header-subtitle">Pantau saldo, rekap per siswa, dan transaksi kelas dalam satu tampilan yang lebih rapi dan hidup.</p>
+                    </div>
+                </div>
+                <div class="header-meta">
+                    <span class="meta-pill">Sinkron Google Sheet</span>
+                    <span class="meta-pill meta-pill-soft" id="sync-badge">Memuat data...</span>
+                </div>
+            </div>
+
             <nav class="tab-nav">
                 <button class="tab-btn active" onclick="bukaTab('rekapan')"><i class="bx bx-pie-chart-alt-2"></i> Rekap</button>
                 <button class="tab-btn" onclick="bukaTab('riwayat')"><i class="bx bx-down-arrow-circle"></i> Masuk</button>
                 <button class="tab-btn" onclick="bukaTab('pengeluaran')"><i class="bx bx-up-arrow-circle"></i> Keluar</button>
             </nav>
+
             <p id="api-status" class="api-status" hidden></p>
         </header>
 
         <div id="rekapan-view" class="view-section active">
-            <div class="card-saldo">
-                <p>Total Kas Aktif Saat Ini</p>
-                <h1 id="total-kas-kelas">Rp 0</h1>
-                <p id="detail-saldo">Masuk: Rp 0 | Keluar: Rp 0</p>
+            <div class="hero-grid">
+                <div class="card-saldo">
+                    <p class="card-kicker">Saldo utama</p>
+                    <h1 id="total-kas-kelas">Rp 0</h1>
+                    <p id="detail-saldo">Masuk: Rp 0 | Keluar: Rp 0</p>
+                    <div class="hero-glow hero-glow-a"></div>
+                    <div class="hero-glow hero-glow-b"></div>
+                </div>
+
+                <div class="summary-grid">
+                    <article class="stat-card">
+                        <span class="stat-label">Siswa tercatat</span>
+                        <strong id="summary-siswa">0</strong>
+                        <p id="summary-siswa-note">Belum ada data siswa aktif.</p>
+                    </article>
+
+                    <article class="stat-card stat-card-accent">
+                        <span class="stat-label">Minggu aktif</span>
+                        <strong id="summary-minggu">0</strong>
+                        <p id="summary-target-note">Target akan mengikuti periode aktif.</p>
+                    </article>
+
+                    <article class="stat-card stat-card-warm">
+                        <span class="stat-label">Siswa lunas</span>
+                        <strong id="summary-lunas">0/0</strong>
+                        <p id="summary-lunas-note">Belum ada progres pembayaran.</p>
+                    </article>
+                </div>
             </div>
 
             <div class="section-header">
-                <h3>Rekap per Siswa</h3>
+                <div>
+                    <p class="section-kicker">Peta pembayaran kelas</p>
+                    <h3>Rekap per Siswa</h3>
+                </div>
                 <span class="badge">Target: <span id="label-target">Rp 0</span></span>
             </div>
 
@@ -49,7 +93,10 @@
 
         <div id="riwayat-view" class="view-section" style="display: none;">
             <div class="section-header">
-                <h3>Riwayat Kas Masuk</h3>
+                <div>
+                    <p class="section-kicker">Arus transaksi masuk</p>
+                    <h3>Riwayat Kas Masuk</h3>
+                </div>
                 <button class="btn btn-biru btn-sm" onclick="siapkanFormTambah('pemasukan')"><i class="bx bx-plus"></i> Pemasukan</button>
             </div>
 
@@ -73,7 +120,10 @@
 
         <div id="pengeluaran-view" class="view-section" style="display: none;">
             <div class="section-header">
-                <h3>Riwayat Keluar</h3>
+                <div>
+                    <p class="section-kicker">Arus transaksi keluar</p>
+                    <h3>Riwayat Keluar</h3>
+                </div>
                 <button class="btn btn-biru btn-sm btn-merah" onclick="siapkanFormTambah('pengeluaran')"><i class="bx bx-minus"></i> Pengeluaran</button>
             </div>
 
@@ -97,49 +147,76 @@
 
         <div id="form-view" class="view-section" style="display: none;">
             <button class="back-link" onclick="bukaTab('rekapan')"><i class="bx bx-left-arrow-alt"></i> Batal</button>
-            <h3 id="judul-form">Form Transaksi</h3>
+            <div class="form-shell">
+                <div class="form-panel">
+                    <div class="section-header form-header">
+                        <div>
+                            <p class="section-kicker">Kelola transaksi</p>
+                            <h3 id="judul-form">Form Transaksi</h3>
+                        </div>
+                    </div>
 
-            <form id="form-kas">
-                <input type="hidden" id="form-action" name="action" value="insert">
-                <input type="hidden" id="form-row" name="row" value="">
-                <input type="hidden" id="form-tipe" name="tipe" value="pemasukan">
+                    <form id="form-kas">
+                        <input type="hidden" id="form-action" name="action" value="insert">
+                        <input type="hidden" id="form-row" name="row" value="">
+                        <input type="hidden" id="form-tipe" name="tipe" value="pemasukan">
 
-                <div class="form-group">
-                    <label for="input-tanggal">Tanggal</label>
-                    <input type="date" id="input-tanggal" name="tanggal" required>
+                        <div class="form-group">
+                            <label for="input-tanggal">Tanggal</label>
+                            <input type="date" id="input-tanggal" name="tanggal" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label id="label-nama" for="input-nama">Nama</label>
+                            <input type="text" id="input-nama" name="nama" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-nominal">Nominal (Rp)</label>
+                            <input type="number" id="input-nominal" name="nominal" min="0" required>
+                        </div>
+
+                        <div class="form-group" id="group-pemasukan">
+                            <label for="input-keterangan-pemasukan">Pembayaran Untuk</label>
+                            <select id="input-keterangan-pemasukan" name="keterangan" class="input-select" required>
+                                <option value="" disabled selected>-- Pilih Pekan/Minggu --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="group-pengeluaran" style="display: none;">
+                            <label for="input-keterangan-pengeluaran">Keterangan Tambahan</label>
+                            <input type="text" id="input-keterangan-pengeluaran" name="keterangan" placeholder="Misal: Beli sapu lidi" disabled required>
+                        </div>
+
+                        <div class="form-group password-group">
+                            <label for="input-password">Password Admin</label>
+                            <input type="password" id="input-password" name="password" placeholder="Masukkan sandi..." required>
+                        </div>
+
+                        <button type="submit" id="tombol-kirim" class="btn btn-hijau">Simpan Data</button>
+                    </form>
+
+                    <div id="pesan-notif" aria-live="polite"></div>
                 </div>
 
-                <div class="form-group">
-                    <label id="label-nama" for="input-nama">Nama</label>
-                    <input type="text" id="input-nama" name="nama" required>
-                </div>
+                <aside class="form-aside">
+                    <div class="aside-card">
+                        <p class="section-kicker">Tips cepat</p>
+                        <h4>Supaya data tetap rapi</h4>
+                        <ul class="tips-list">
+                            <li>Pilih minggu pembayaran yang sesuai saat input pemasukan.</li>
+                            <li>Gunakan nama siswa yang konsisten agar rekap tidak terpecah.</li>
+                            <li>Cek kembali nominal sebelum menekan simpan.</li>
+                        </ul>
+                    </div>
 
-                <div class="form-group">
-                    <label for="input-nominal">Nominal (Rp)</label>
-                    <input type="number" id="input-nominal" name="nominal" min="0" required>
-                </div>
-
-                <div class="form-group" id="group-pemasukan">
-                    <label for="input-keterangan-pemasukan">Pembayaran Untuk</label>
-                    <select id="input-keterangan-pemasukan" name="keterangan" class="input-select" required>
-                        <option value="" disabled selected>-- Pilih Pekan/Minggu --</option>
-                    </select>
-                </div>
-
-                <div class="form-group" id="group-pengeluaran" style="display: none;">
-                    <label for="input-keterangan-pengeluaran">Keterangan Tambahan</label>
-                    <input type="text" id="input-keterangan-pengeluaran" name="keterangan" placeholder="Misal: Beli sapu lidi" disabled required>
-                </div>
-
-                <div class="form-group password-group">
-                    <label for="input-password">Password Admin</label>
-                    <input type="password" id="input-password" name="password" placeholder="Masukkan sandi..." required>
-                </div>
-
-                <button type="submit" id="tombol-kirim" class="btn btn-hijau">Simpan Data</button>
-            </form>
-
-            <div id="pesan-notif" aria-live="polite"></div>
+                    <div class="aside-card aside-card-highlight">
+                        <p class="section-kicker">Admin note</p>
+                        <h4>Semua perubahan langsung sinkron</h4>
+                        <p>Setelah data disimpan, dashboard akan menarik ulang data terbaru dari Google Sheet secara otomatis.</p>
+                    </div>
+                </aside>
+            </div>
         </div>
 
         <div class="footer-app">
@@ -148,6 +225,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=20260316-2"></script>
+    <script src="script.js?v=20260316-3"></script>
 </body>
 </html>
