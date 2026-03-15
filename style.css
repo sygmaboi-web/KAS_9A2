@@ -1,31 +1,125 @@
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-.container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 600px; }
-h2 { text-align: center; color: #333; margin-top: 0; margin-bottom: 20px; }
+/* Import Font Modern 'Poppins' dari Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
-/* Tombol & Link */
-.menu-atas { text-align: right; margin-bottom: 15px; }
-.btn { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; color: white; }
-.btn-biru { background-color: #007bff; } .btn-biru:hover { background-color: #0056b3; }
-.btn-hijau { background-color: #28a745; width: 100%; padding: 12px; font-size: 16px; margin-top: 10px;} .btn-hijau:hover { background-color: #218838; }
-.back-link { background: none; border: none; color: #007bff; cursor: pointer; font-weight: bold; padding: 0; margin-bottom: 15px; text-align: left; display: block; font-size: 14px; }
-.back-link:hover { text-decoration: underline; }
-button:disabled { background-color: #a0c4ff; cursor: not-allowed; }
+body { 
+    font-family: 'Poppins', sans-serif; 
+    background: #f4f7fe; /* Warna background abu-abu kebiruan yang modern */
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    min-height: 100vh; 
+    margin: 0; 
+    padding: 20px; 
+    box-sizing: border-box; 
+}
 
-/* Form */
-.form-group { margin-bottom: 15px; }
-label { display: block; margin-bottom: 5px; color: #555; font-weight: bold; font-size: 14px; }
-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-.password-group input { border: 2px solid #dc3545; }
+.container { 
+    background: #ffffff; 
+    padding: 40px 30px; 
+    border-radius: 20px; /* Sudut lebih melengkung */
+    box-shadow: 0 10px 30px rgba(112, 144, 176, 0.15); /* Bayangan halus kekinian */
+    width: 100%; 
+    max-width: 650px; 
+}
 
-/* Tabel */
-.table-responsive { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-th, td { padding: 12px; border: 1px solid #ddd; text-align: left; font-size: 14px;}
-th { background-color: #007bff; color: white; }
-tr:nth-child(even) { background-color: #f9f9f9; }
-.loading { text-align: center; font-style: italic; color: #666; }
+h2 { 
+    text-align: center; 
+    color: #2b3674; /* Warna biru gelap elegan */
+    margin-top: 0; 
+    margin-bottom: 25px; 
+    font-weight: 600; 
+    letter-spacing: -0.5px;
+}
 
-/* Notifikasi */
-#pesan-notif { text-align: center; margin-top: 15px; font-weight: bold; display: none; padding: 10px; border-radius: 5px; font-size: 14px;}
-.sukses { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;}
-.gagal { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;}
+/* --- Tombol & Link Interaktif --- */
+.menu-atas { text-align: right; margin-bottom: 20px; }
+
+.btn { 
+    padding: 12px 20px; 
+    border: none; 
+    border-radius: 12px; 
+    cursor: pointer; 
+    font-size: 14px; 
+    font-weight: 500; 
+    color: white; 
+    transition: all 0.3s ease; /* Transisi mulus untuk animasi */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+}
+
+.btn:active { transform: scale(0.97); } /* Efek tertekan saat diklik */
+
+.btn-biru { background: #4318FF; } /* Biru Indigo Modern */
+.btn-biru:hover { 
+    background: #3311db; 
+    box-shadow: 0 6px 15px rgba(67, 24, 255, 0.3); 
+    transform: translateY(-3px); /* Tombol melayang ke atas */
+}
+
+.btn-hijau { background: #01B574; width: 100%; font-size: 16px; margin-top: 15px; }
+.btn-hijau:hover { 
+    background: #019a62; 
+    box-shadow: 0 6px 15px rgba(1, 181, 116, 0.3); 
+    transform: translateY(-3px); 
+}
+
+.back-link { 
+    background: none; border: none; color: #4318FF; cursor: pointer; 
+    font-weight: 500; padding: 0; margin-bottom: 20px; text-align: left; 
+    display: inline-block; font-size: 14px; transition: all 0.3s ease; 
+}
+.back-link:hover { 
+    color: #3311db; 
+    transform: translateX(-5px); /* Panah bergerak ke kiri saat dihover */
+}
+
+button:disabled { background-color: #e0e5f2; color: #a3aed1; cursor: not-allowed; box-shadow: none; transform: none; }
+
+/* --- Form Kekinian --- */
+.form-group { margin-bottom: 18px; text-align: left; }
+label { display: block; margin-bottom: 8px; color: #8f9bba; font-weight: 500; font-size: 13px; }
+
+input { 
+    width: 100%; padding: 14px 15px; 
+    border: 1px solid #e0e5f2; border-radius: 12px; 
+    box-sizing: border-box; font-family: 'Poppins', sans-serif; 
+    font-size: 14px; color: #2b3674; background: #f4f7fe; /* Background input soft */
+    transition: all 0.3s ease; 
+}
+/* Efek menyala (glowing) saat sedang mengetik */
+input:focus { 
+    outline: none; border-color: #4318FF; background: #ffffff; 
+    box-shadow: 0 0 0 4px rgba(67, 24, 255, 0.15); 
+}
+input::placeholder { color: #a3aed1; }
+
+.password-group input { border: 1px solid #ff5b5b; background: #fff5f5; }
+.password-group input:focus { border-color: #ff5b5b; box-shadow: 0 0 0 4px rgba(255, 91, 91, 0.15); }
+
+/* --- Tabel Bersih & Modern --- */
+.table-responsive { 
+    overflow-x: auto; 
+    border-radius: 15px; 
+    border: 1px solid #e0e5f2;
+}
+table { width: 100%; border-collapse: collapse; background: white; }
+th, td { padding: 16px; text-align: left; font-size: 14px; border-bottom: 1px solid #f4f7fe; }
+th { background-color: #f8f9fc; color: #8f9bba; font-weight: 500; font-size: 13px; border-bottom: 2px solid #e0e5f2; }
+td { color: #2b3674; font-weight: 500; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background-color: #f8f9fc; } /* Warna baris berubah saat kursor lewat */
+
+.loading { text-align: center; font-style: normal; color: #a3aed1; font-weight: 400; }
+
+/* --- Notifikasi dengan Animasi Muncul --- */
+#pesan-notif { 
+    text-align: center; margin-top: 20px; font-weight: 500; display: none; 
+    padding: 15px; border-radius: 12px; font-size: 14px; 
+    animation: munculMulus 0.4s ease; /* Animasi pop-up */
+}
+.sukses { background-color: #e5f9f0; color: #01B574; border: 1px solid #a3e8ca; }
+.gagal { background-color: #ffecec; color: #ff5b5b; border: 1px solid #ffbaba; }
+
+@keyframes munculMulus { 
+    from { opacity: 0; transform: translateY(-10px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}
