@@ -20,11 +20,18 @@ const state = {
 
 const refs = {
     apiStatus: document.getElementById('api-status'),
+    syncBadge: document.getElementById('sync-badge'),
     tabButtons: document.querySelectorAll('.tab-btn'),
     sections: document.querySelectorAll('.view-section'),
     saldoTotal: document.getElementById('total-kas-kelas'),
     detailSaldo: document.getElementById('detail-saldo'),
     targetLabel: document.getElementById('label-target'),
+    summarySiswa: document.getElementById('summary-siswa'),
+    summarySiswaNote: document.getElementById('summary-siswa-note'),
+    summaryMinggu: document.getElementById('summary-minggu'),
+    summaryTargetNote: document.getElementById('summary-target-note'),
+    summaryLunas: document.getElementById('summary-lunas'),
+    summaryLunasNote: document.getElementById('summary-lunas-note'),
     rekapBody: document.getElementById('data-rekapan'),
     riwayatBody: document.getElementById('data-riwayat'),
     pengeluaranBody: document.getElementById('data-pengeluaran'),
@@ -65,6 +72,13 @@ function escapeHtml(value) {
 
 function formatRupiah(value) {
     return `Rp ${Number(value || 0).toLocaleString('id-ID')}`;
+}
+
+function formatSyncTime(date) {
+    return new Intl.DateTimeFormat('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit'
+    }).format(date);
 }
 
 function toNumber(value) {
@@ -178,6 +192,38 @@ function updateApiStatus() {
     refs.apiStatus.textContent = 'Mode aman aktif: update Google Apps Script dulu agar tombol edit dan hapus benar-benar berfungsi.';
 }
 
+function updateSummaryCards(urutanNama, rekapMap, targetTotal) {
+    if (!refs.summarySiswa || !refs.summaryMinggu || !refs.summaryLunas) {
+        return;
+    }
+
+    const jumlahSiswa = urutanNama.length;
+    const nominalMingguan = toNumber(state.meta.nominalPerMinggu) || DEFAULT_WEEKLY_FEE;
+    const mingguAktif = toNumber(state.meta.activeWeekCount) || (nominalMingguan > 0 ? Math.round(targetTotal / nominalMingguan) : 0);
+    let lunasCount = 0;
+
+    urutanNama.forEach((nama) => {
+        if (targetTotal > 0 && rekapMap[nama] >= targetTotal) {
+            lunasCount += 1;
+        }
+    });
+
+    refs.summarySiswa.textContent = jumlahSiswa;
+    refs.summarySiswaNote.textContent = jumlahSiswa
+        ? `${jumlahSiswa} siswa sedang dipantau di dashboard kas.`
+        : 'Belum ada siswa aktif yang terbaca.';
+
+    refs.summaryMinggu.textContent = mingguAktif;
+    refs.summaryTargetNote.textContent = targetTotal > 0
+        ? `Target aktif saat ini ${formatRupiah(targetTotal)} per siswa.`
+        : 'Target aktif belum tersedia.';
+
+    refs.summaryLunas.textContent = `${lunasCount}/${jumlahSiswa}`;
+    refs.summaryLunasNote.textContent = jumlahSiswa
+        ? `${Math.round((lunasCount / jumlahSiswa) * 100)}% siswa sudah mencapai target aktif.`
+        : 'Belum ada progres pembayaran.';
+}
+
 function renderActionButtons(row, tipe) {
     if (!state.supportsCrud) {
         return `
@@ -240,6 +286,7 @@ function renderRekap(dataPemasukan) {
 
     const targetTotal = toNumber(state.meta.targetTotal) || buildFallbackTarget(rekapMap);
     refs.targetLabel.textContent = formatRupiah(targetTotal);
+    updateSummaryCards(urutanNama, rekapMap, targetTotal);
 
     if (!urutanNama.length) {
         refs.rekapBody.innerHTML = '<tr><td colspan="3" class="empty">Belum ada rekap.</td></tr>';
@@ -338,6 +385,10 @@ function applyApiPayload(payload) {
     );
     state.supportsCrud = Number(state.meta.apiVersion || 0) >= 2;
 
+    if (refs.syncBadge) {
+        refs.syncBadge.textContent = `Sinkron ${formatSyncTime(new Date())}`;
+    }
+
     updateApiStatus();
     setSelectOptions('');
     renderSaldo(state.pemasukan, state.pengeluaran);
@@ -363,6 +414,9 @@ function muatData() {
         })
         .catch((error) => {
             console.error(error);
+            if (refs.syncBadge) {
+                refs.syncBadge.textContent = 'Sinkron gagal';
+            }
             refs.riwayatBody.innerHTML = '<tr><td colspan="5" class="loading" style="color:#ef4444;">Gagal memuat data.</td></tr>';
             refs.pengeluaranBody.innerHTML = '<tr><td colspan="5" class="loading" style="color:#ef4444;">Gagal memuat data.</td></tr>';
             refs.rekapBody.innerHTML = '<tr><td colspan="3" class="loading" style="color:#ef4444;">Gagal memuat data.</td></tr>';
@@ -526,4 +580,3 @@ window.bukaTab = bukaTab;
 window.siapkanFormTambah = siapkanFormTambah;
 
 muatData();
-
