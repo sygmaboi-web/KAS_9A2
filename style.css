@@ -9,7 +9,7 @@ body {
 
 .app-container { 
     background: #ffffff; 
-    width: 100%; max-width: 600px; 
+    width: 100%; max-width: 850px; 
     border-radius: 24px; 
     box-shadow: 0 20px 40px rgba(15, 23, 42, 0.05); 
     overflow: hidden;
@@ -106,3 +106,33 @@ input:focus { outline: none; border-color: #3b82f6; background: #ffffff; box-sha
     background: #f8fafc; color: #334155; cursor: pointer; transition: 0.3s;
 }
 .input-select:focus { outline: none; border-color: #3b82f6; background: #ffffff; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+.app-container { 
+    background: #ffffff; 
+    width: 100%; 
+    max-width: 850px; /* <--- INI DIUBAH DARI 600px BIAR LEBIH LEBAR */ 
+    border-radius: 24px; 
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.05); 
+    overflow: hidden;
+    min-height: 80vh;
+    display: flex; /* Tambahan biar footer selalu di bawah */
+    flex-direction: column; 
+}
+
+/* --- KODE BARU UNTUK FOOTER (Taruh paling bawah) --- */
+.view-section {
+    flex: 1; /* Biar konten utama ngedorong footer ke bawah */
+}
+
+.footer-app {
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+    border-top: 1px solid #e2e8f0;
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 500;
+    background-color: #f8fafc;
+}
+.footer-app i {
+    color: #ef4444; /* Warna merah buat icon hati */
+}
