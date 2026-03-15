@@ -225,11 +225,15 @@ function bukaTab(namaTab) {
 
 function renderRekap(dataPemasukan) {
     const rekapMap = {};
+    const urutanNama = [];
 
     dataPemasukan.forEach((item) => {
         const nama = normalizeName(item.nama);
         if (!nama) {
             return;
+        }
+        if (!(nama in rekapMap)) {
+            urutanNama.push(nama);
         }
         rekapMap[nama] = (rekapMap[nama] || 0) + toNumber(item.nominal);
     });
@@ -237,13 +241,12 @@ function renderRekap(dataPemasukan) {
     const targetTotal = toNumber(state.meta.targetTotal) || buildFallbackTarget(rekapMap);
     refs.targetLabel.textContent = formatRupiah(targetTotal);
 
-    const names = Object.keys(rekapMap).sort();
-    if (!names.length) {
+    if (!urutanNama.length) {
         refs.rekapBody.innerHTML = '<tr><td colspan="3" class="empty">Belum ada rekap.</td></tr>';
         return;
     }
 
-    refs.rekapBody.innerHTML = names.map((nama) => {
+    refs.rekapBody.innerHTML = urutanNama.map((nama) => {
         const totalBayar = rekapMap[nama];
         let statusBadge = '<span class="badge">Belum ada target</span>';
 
@@ -523,3 +526,4 @@ window.bukaTab = bukaTab;
 window.siapkanFormTambah = siapkanFormTambah;
 
 muatData();
+
