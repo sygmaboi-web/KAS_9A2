@@ -2,7 +2,7 @@
 
 body { 
     font-family: 'Plus Jakarta Sans', sans-serif; 
-    background: #f1f5f9; /* Warna latar aplikasi (Slate 100) */
+    background: #f1f5f9; 
     margin: 0; padding: 20px 10px;
     display: flex; justify-content: center;
 }
@@ -13,7 +13,8 @@ body {
     border-radius: 24px; 
     box-shadow: 0 20px 40px rgba(15, 23, 42, 0.05); 
     overflow: hidden;
-    min-height: 80vh;
+    min-height: 90vh;
+    display: flex; flex-direction: column; 
 }
 
 /* HEADER & NAVIGASI TAB */
@@ -32,8 +33,15 @@ body {
 }
 .tab-btn.active { background: #ffffff; color: #3b82f6; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-/* KONTEN VIEW */
-.view-section { padding: 0 25px 30px 25px; }
+/* KONTEN VIEW & FOOTER */
+.view-section { padding: 0 25px 30px 25px; flex: 1; }
+
+.footer-app {
+    text-align: center; padding: 20px; margin-top: auto; 
+    border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 13px; 
+    font-weight: 500; background-color: #f8fafc;
+}
+.footer-app i { color: #ef4444; }
 
 /* KARTU SALDO */
 .card-saldo {
@@ -45,11 +53,10 @@ body {
 .card-saldo p { margin: 0; font-size: 14px; opacity: 0.9; }
 .card-saldo h1 { margin: 10px 0 0 0; font-size: 32px; letter-spacing: -1px; }
 
-/* HEADER BAGIAN (TEXT & TOMBOL) */
+/* HEADER BAGIAN & BADGE */
 .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
 .section-header h3 { margin: 0; color: #0f172a; font-size: 16px; }
 
-/* BADGES (STATUS) */
 .badge { padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; }
 #label-target { color: #3b82f6; }
 .badge.lunas { background: #dcfce7; color: #166534; }
@@ -75,6 +82,7 @@ input:focus { outline: none; border-color: #3b82f6; background: #ffffff; box-sha
 .password-group input { border-color: #f87171; background: #fef2f2;}
 .password-group input:focus { border-color: #ef4444; box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1); }
 
+/* Tombol Aksi */
 .btn { padding: 12px 20px; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; display: flex; align-items: center; gap: 5px; justify-content: center;}
 .btn-sm { padding: 8px 12px; font-size: 13px; border-radius: 8px; }
 .btn-biru { background: #eff6ff; color: #2563eb; } .btn-biru:hover { background: #dbeafe; }
@@ -83,12 +91,6 @@ input:focus { outline: none; border-color: #3b82f6; background: #ffffff; box-sha
 .back-link { background: none; border: none; color: #64748b; font-weight: 600; cursor: pointer; padding: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 5px;}
 .back-link:hover { color: #0f172a; }
 
-/* NOTIF */
-#pesan-notif { text-align: center; margin-top: 15px; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 600; display: none; }
-.sukses { background: #dcfce7; color: #166534; }
-.gagal { background: #fee2e2; color: #991b1b; }
-.loading { text-align: center; color: #94a3b8; font-style: italic; }
-/* --- TAMBAHAN UNTUK FITUR EDIT/HAPUS & DROPDOWN --- */
 .aksi-buttons { display: flex; gap: 8px; }
 .btn-icon { 
     background: transparent; border: none; font-size: 18px; 
@@ -99,40 +101,16 @@ input:focus { outline: none; border-color: #3b82f6; background: #ffffff; box-sha
 .btn-icon.delete { color: #ef4444; }
 .btn-icon.delete:hover { background: #fef2f2; color: #dc2626; }
 
-/* Gaya untuk select dropdown */
+/* Dropdown Select */
 .input-select {
     width: 100%; padding: 14px; border: 1px solid #cbd5e1; 
     border-radius: 12px; font-family: inherit; font-size: 14px; 
     background: #f8fafc; color: #334155; cursor: pointer; transition: 0.3s;
 }
 .input-select:focus { outline: none; border-color: #3b82f6; background: #ffffff; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
-.app-container { 
-    background: #ffffff; 
-    width: 100%; 
-    max-width: 850px; /* <--- INI DIUBAH DARI 600px BIAR LEBIH LEBAR */ 
-    border-radius: 24px; 
-    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.05); 
-    overflow: hidden;
-    min-height: 80vh;
-    display: flex; /* Tambahan biar footer selalu di bawah */
-    flex-direction: column; 
-}
 
-/* --- KODE BARU UNTUK FOOTER (Taruh paling bawah) --- */
-.view-section {
-    flex: 1; /* Biar konten utama ngedorong footer ke bawah */
-}
-
-.footer-app {
-    text-align: center;
-    padding: 20px;
-    margin-top: 20px;
-    border-top: 1px solid #e2e8f0;
-    color: #94a3b8;
-    font-size: 13px;
-    font-weight: 500;
-    background-color: #f8fafc;
-}
-.footer-app i {
-    color: #ef4444; /* Warna merah buat icon hati */
-}
+/* NOTIFIKASI */
+#pesan-notif { text-align: center; margin-top: 15px; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 600; display: none; }
+.sukses { background: #dcfce7; color: #166534; }
+.gagal { background: #fee2e2; color: #991b1b; }
+.loading { text-align: center; color: #94a3b8; font-style: italic; }
