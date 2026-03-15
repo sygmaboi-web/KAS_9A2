@@ -1,6 +1,6 @@
 // --- KONFIGURASI PENTING ---
 const scriptURL = 'https://script.google.com/macros/s/AKfycbxnylY84K9U0CdybaoWRSpegN9H_dEy9WJDUapk3xycB7k92HhA-ElDG8ZYSu-w2Ag/exec'; 
-const TARGET_KAS = 50000; 
+const TARGET_KAS = 40000; 
 
 document.getElementById('label-target').textContent = 'Rp ' + TARGET_KAS.toLocaleString('id-ID');
 
