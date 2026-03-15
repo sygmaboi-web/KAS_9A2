@@ -13,15 +13,17 @@
         <header class="header">
             <h2><i class='bx bx-wallet'></i> Kas Kelas 9</h2>
             <nav class="tab-nav">
-                <button class="tab-btn active" onclick="bukaTab('rekapan')"><i class='bx bx-pie-chart-alt-2'></i> Rekapan</button>
-                <button class="tab-btn" onclick="bukaTab('riwayat')"><i class='bx bx-list-ul'></i> Riwayat</button>
+                <button class="tab-btn active" onclick="bukaTab('rekapan')"><i class='bx bx-pie-chart-alt-2'></i> Rekap</button>
+                <button class="tab-btn" onclick="bukaTab('riwayat')"><i class='bx bx-down-arrow-circle'></i> Masuk</button>
+                <button class="tab-btn" onclick="bukaTab('pengeluaran')"><i class='bx bx-up-arrow-circle'></i> Keluar</button>
             </nav>
         </header>
 
         <div id="rekapan-view" class="view-section active">
             <div class="card-saldo">
-                <p>Total Saldo Kas Kelas</p>
+                <p>Total Kas Aktif Saat Ini</p>
                 <h1 id="total-kas-kelas">Rp 0</h1>
+                <p style="font-size: 12px; margin-top: 5px;" id="detail-saldo">Pemasukan: Rp 0 | Keluar: Rp 0</p>
             </div>
             <div class="section-header">
                 <h3>Rekap per Siswa</h3>
@@ -33,7 +35,7 @@
                         <tr><th>Nama Siswa</th><th>Total Bayar</th><th>Status</th></tr>
                     </thead>
                     <tbody id="data-rekapan">
-                        <tr><td colspan="3" class="loading">Memuat rekap data...</td></tr>
+                        <tr><td colspan="3" class="loading">Memuat rekap...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -41,8 +43,8 @@
 
         <div id="riwayat-view" class="view-section" style="display: none;">
             <div class="section-header">
-                <h3>Riwayat Pemasukan</h3>
-                <button class="btn btn-biru btn-sm" onclick="siapkanFormTambah()"><i class='bx bx-plus'></i> Tambah</button>
+                <h3>Riwayat Kas Masuk</h3>
+                <button class="btn btn-biru btn-sm" onclick="siapkanFormTambah('pemasukan')"><i class='bx bx-plus'></i> Pemasukan</button>
             </div>
             <div class="table-responsive">
                 <table>
@@ -50,27 +52,45 @@
                         <tr><th>Tanggal</th><th>Nama</th><th>Nominal</th><th>Pekan</th><th>Aksi</th></tr>
                     </thead>
                     <tbody id="data-riwayat">
-                        <tr><td colspan="5" class="loading">Memuat riwayat...</td></tr>
+                        <tr><td colspan="5" class="loading">Memuat kas masuk...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="pengeluaran-view" class="view-section" style="display: none;">
+            <div class="section-header">
+                <h3>Riwayat Keluar</h3>
+                <button class="btn btn-biru btn-sm" style="background:#fef2f2; color:#ef4444;" onclick="siapkanFormTambah('pengeluaran')"><i class='bx bx-minus'></i> Pengeluaran</button>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr><th>Tanggal</th><th>Beli Apa</th><th>Nominal</th><th>Ket</th><th>Aksi</th></tr>
+                    </thead>
+                    <tbody id="data-pengeluaran">
+                        <tr><td colspan="5" class="loading">Memuat pengeluaran...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
         <div id="form-view" class="view-section" style="display: none;">
-            <button class="back-link" onclick="bukaTab('riwayat')"><i class='bx bx-left-arrow-alt'></i> Batal & Kembali</button>
-            <h3 id="judul-form" style="margin-top: 0;">Setor Uang Kas</h3>
+            <button class="back-link" onclick="bukaTab('rekapan')"><i class='bx bx-left-arrow-alt'></i> Batal</button>
+            <h3 id="judul-form" style="margin-top: 0;">Form Transaksi</h3>
             
             <form id="form-kas">
                 <input type="hidden" name="action" id="form-action" value="insert">
                 <input type="hidden" name="row" id="form-row" value="">
+                <input type="hidden" name="tipe" id="form-tipe" value="pemasukan">
 
                 <div class="form-group"><label>Tanggal</label><input type="date" id="input-tanggal" name="tanggal" required></div>
-                <div class="form-group"><label>Nama Penyetor</label><input type="text" id="input-nama" name="nama" required></div>
+                <div class="form-group"><label id="label-nama">Nama</label><input type="text" id="input-nama" name="nama" required></div>
                 <div class="form-group"><label>Nominal (Rp)</label><input type="number" id="input-nominal" name="nominal" required></div>
                 
-                <div class="form-group">
+                <div class="form-group" id="group-pemasukan">
                     <label>Pembayaran Untuk</label>
-                    <select id="input-keterangan" name="keterangan" class="input-select" required>
+                    <select id="input-keterangan-pemasukan" name="keterangan" class="input-select" required>
                         <option value="" disabled selected>-- Pilih Pekan/Minggu --</option>
                         <option value="Minggu 1">Minggu 1</option>
                         <option value="Minggu 2">Minggu 2</option>
@@ -80,19 +100,23 @@
                     </select>
                 </div>
 
+                <div class="form-group" id="group-pengeluaran" style="display: none;">
+                    <label>Keterangan Tambahan</label>
+                    <input type="text" id="input-keterangan-pengeluaran" name="keterangan" placeholder="Misal: Beli sapu lidi" disabled required>
+                </div>
+
                 <div class="form-group password-group"><label>Password Admin</label><input type="password" name="password" id="input-password" placeholder="Masukkan sandi..." required></div>
                 <button type="submit" id="tombol-kirim" class="btn btn-hijau">Simpan Data</button>
             </form>
             <div id="pesan-notif"></div>
         </div>
-<div id="form-view" class="view-section" style="display: none;">
-            </div>
-        
+
         <div class="footer-app">
             &copy; 2026 Kas Kelas 9 - SMPIP Baitul Maal. <br>
-            Made by @alvino_daris 
+            Made By @alvino_daris
         </div>
+    </div>
 
-    </div> <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
