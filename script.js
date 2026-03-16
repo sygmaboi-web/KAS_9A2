@@ -1,6 +1,8 @@
 const scriptURL = 'https://script.google.com/macros/s/AKfycbxnylY84K9U0CdybaoWRSpegN9H_dEy9WJDUapk3xycB7k92HhA-ElDG8ZYSu-w2Ag/exec';
 const DEFAULT_WEEKLY_FEE = 5000;
 const LEGACY_WEEK_OPTIONS = ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'];
+const NOMINAL_HELPER_PEMASUKAN = 'Isi nominal langsung untuk pemasukan.';
+const NOMINAL_HELPER_PENGELUARAN = 'Kalau kuantitas dan harga satuan diisi, total dihitung otomatis. Kalau belum, total masih bisa diisi manual.';
 
 const state = {
     pemasukan: [],
@@ -45,7 +47,13 @@ const refs = {
     formJudul: document.getElementById('judul-form'),
     inputTanggal: document.getElementById('input-tanggal'),
     inputNama: document.getElementById('input-nama'),
+    labelNominal: document.getElementById('label-nominal'),
     inputNominal: document.getElementById('input-nominal'),
+    nominalHelper: document.getElementById('nominal-helper'),
+    groupNominal: document.getElementById('group-nominal'),
+    groupDetailPengeluaran: document.getElementById('group-detail-pengeluaran'),
+    inputKuantitas: document.getElementById('input-kuantitas'),
+    inputHargaSatuan: document.getElementById('input-harga-satuan'),
     labelNama: document.getElementById('label-nama'),
     selectMasuk: document.getElementById('input-keterangan-pemasukan'),
     inputKeluar: document.getElementById('input-keterangan-pengeluaran'),
@@ -77,6 +85,12 @@ function formatRupiah(value) {
     return `Rp ${Number(value || 0).toLocaleString('id-ID')}`;
 }
 
+function formatQuantity(value) {
+    return new Intl.NumberFormat('id-ID', {
+        maximumFractionDigits: 2
+    }).format(toDecimal(value));
+}
+
 function formatSyncTime(date) {
     return new Intl.DateTimeFormat('id-ID', {
         hour: '2-digit',
@@ -94,6 +108,32 @@ function setSyncBadge(text) {
 function toNumber(value) {
     const parsed = parseInt(String(value == null ? '' : value).replace(/[^0-9-]/g, ''), 10);
     return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+function toDecimal(value) {
+    let text = String(value == null ? '' : value).trim();
+    if (!text) {
+        return 0;
+    }
+
+    text = text.replace(/\s+/g, '');
+    if (text.includes(',') && text.includes('.')) {
+        text = text.replace(/\./g, '').replace(',', '.');
+    } else if (text.includes(',')) {
+        text = text.replace(',', '.');
+    }
+
+    const parsed = parseFloat(text.replace(/[^0-9.-]/g, ''));
+    return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function serializeQuantity(value) {
+    const numeric = toDecimal(value);
+    if (numeric <= 0) {
+        return '';
+    }
+
+    return Number.isInteger(numeric) ? String(numeric) : String(numeric).replace(/\.0+$/, '');
 }
 
 function normalizeName(value) {
@@ -202,6 +242,31 @@ function updateApiStatus() {
     refs.apiStatus.textContent = 'Mode aman aktif: update Google Apps Script dulu agar tombol edit dan hapus benar-benar berfungsi.';
 }
 
+function syncExpenseTotal() {
+    if (refs.formTipe.value !== 'pengeluaran') {
+        refs.inputNominal.readOnly = false;
+        refs.inputNominal.classList.remove('input-readonly');
+        refs.nominalHelper.textContent = NOMINAL_HELPER_PEMASUKAN;
+        return;
+    }
+
+    const kuantitas = toDecimal(refs.inputKuantitas.value);
+    const hargaSatuan = toNumber(refs.inputHargaSatuan.value);
+    const hasBreakdown = kuantitas > 0 && hargaSatuan > 0;
+
+    refs.inputNominal.readOnly = hasBreakdown;
+    refs.inputNominal.classList.toggle('input-readonly', hasBreakdown);
+
+    if (hasBreakdown) {
+        const total = Math.round(kuantitas * hargaSatuan);
+        refs.inputNominal.value = String(total);
+        refs.nominalHelper.textContent = `${formatQuantity(kuantitas)} x ${formatRupiah(hargaSatuan)} = ${formatRupiah(total)}`;
+        return;
+    }
+
+    refs.nominalHelper.textContent = NOMINAL_HELPER_PENGELUARAN;
+}
+
 function updateSummaryCards(urutanNama, rekapMap, targetTotal) {
     if (!refs.summarySiswa || !refs.summaryMinggu || !refs.summaryLunas) {
         return;
@@ -253,7 +318,7 @@ function renderTableSkeleton(tbody, columns, label) {
 
 function showLoadingState() {
     renderTableSkeleton(refs.riwayatBody, 5, 'Memuat kas masuk...');
-    renderTableSkeleton(refs.pengeluaranBody, 5, 'Memuat pengeluaran...');
+    renderTableSkeleton(refs.pengeluaranBody, 7, 'Memuat pengeluaran...');
     renderTableSkeleton(refs.rekapBody, 3, 'Menghitung rekap...');
 }
 
@@ -383,18 +448,22 @@ function renderPengeluaran(dataPengeluaran) {
     state.lookup.pengeluaran = {};
 
     if (!dataPengeluaran.length) {
-        refs.pengeluaranBody.innerHTML = '<tr><td colspan="5" class="empty">Belum ada pengeluaran.</td></tr>';
+        refs.pengeluaranBody.innerHTML = '<tr><td colspan="7" class="empty">Belum ada pengeluaran.</td></tr>';
         return;
     }
 
     refs.pengeluaranBody.innerHTML = dataPengeluaran.map((item) => {
         const nominal = toNumber(item.nominal);
+        const kuantitas = toDecimal(item.kuantitas);
+        const hargaSatuan = toNumber(item.hargaSatuan);
         state.lookup.pengeluaran[item.row] = item;
 
         return `
             <tr>
                 <td>${escapeHtml(item.tanggal)}</td>
                 <td>${escapeHtml(item.nama)}</td>
+                <td>${kuantitas > 0 ? escapeHtml(formatQuantity(kuantitas)) : '-'}</td>
+                <td>${hargaSatuan > 0 ? formatRupiah(hargaSatuan) : '-'}</td>
                 <td>${formatRupiah(nominal)}</td>
                 <td>${escapeHtml(item.keterangan || '-')}</td>
                 <td>${renderActionButtons(item.row, 'pengeluaran')}</td>
@@ -478,7 +547,7 @@ function muatData(options = {}) {
 
             if (!state.hasLoadedOnce) {
                 refs.riwayatBody.innerHTML = '<tr><td colspan="5" class="loading" style="color:#ef4444;">Gagal memuat data.</td></tr>';
-                refs.pengeluaranBody.innerHTML = '<tr><td colspan="5" class="loading" style="color:#ef4444;">Gagal memuat data.</td></tr>';
+                refs.pengeluaranBody.innerHTML = '<tr><td colspan="7" class="loading" style="color:#ef4444;">Gagal memuat data.</td></tr>';
                 refs.rekapBody.innerHTML = '<tr><td colspan="3" class="loading" style="color:#ef4444;">Gagal memuat data.</td></tr>';
             }
         })
@@ -493,22 +562,36 @@ function aturFormUI(tipe) {
 
     if (tipe === 'pengeluaran') {
         refs.labelNama.textContent = 'Barang / Keperluan';
+        refs.labelNominal.textContent = 'Total Belanja (Rp)';
         refs.formJudul.textContent = refs.formAction.value === 'edit' ? 'Edit Pengeluaran' : 'Catat Pengeluaran';
+        refs.groupDetailPengeluaran.style.display = 'grid';
+        refs.inputKuantitas.disabled = false;
+        refs.inputHargaSatuan.disabled = false;
         refs.groupMasuk.style.display = 'none';
         refs.selectMasuk.disabled = true;
         refs.groupKeluar.style.display = 'block';
         refs.inputKeluar.disabled = false;
         refs.submitButton.style.backgroundColor = '#ef4444';
+        refs.inputNominal.placeholder = 'Isi manual atau otomatis dari detail belanja';
+        syncExpenseTotal();
         return;
     }
 
     refs.labelNama.textContent = 'Nama Siswa';
+    refs.labelNominal.textContent = 'Nominal (Rp)';
     refs.formJudul.textContent = refs.formAction.value === 'edit' ? 'Edit Pemasukan' : 'Setor Uang Kas';
+    refs.groupDetailPengeluaran.style.display = 'none';
+    refs.inputKuantitas.disabled = true;
+    refs.inputHargaSatuan.disabled = true;
     refs.groupMasuk.style.display = 'block';
     refs.selectMasuk.disabled = false;
     refs.groupKeluar.style.display = 'none';
     refs.inputKeluar.disabled = true;
     refs.submitButton.style.backgroundColor = '';
+    refs.inputNominal.readOnly = false;
+    refs.inputNominal.classList.remove('input-readonly');
+    refs.inputNominal.placeholder = '';
+    refs.nominalHelper.textContent = NOMINAL_HELPER_PEMASUKAN;
     setSelectOptions('');
 }
 
@@ -517,7 +600,11 @@ function siapkanFormTambah(tipe) {
     refs.formAction.value = 'insert';
     refs.formRow.value = '';
     refs.inputTanggal.value = todayIso();
-    refs.inputNominal.value = toNumber(state.meta.nominalPerMinggu) || DEFAULT_WEEKLY_FEE;
+    refs.inputKuantitas.value = '';
+    refs.inputHargaSatuan.value = '';
+    refs.inputNominal.value = tipe === 'pengeluaran'
+        ? ''
+        : toNumber(state.meta.nominalPerMinggu) || DEFAULT_WEEKLY_FEE;
     setSelectOptions('');
     aturFormUI(tipe);
     refs.submitButton.textContent = 'Simpan Data';
@@ -533,11 +620,15 @@ function editData(record, tipe) {
 
     refs.inputTanggal.value = normalizeDateForInput(record.tanggal);
     refs.inputNama.value = record.nama || '';
-    refs.inputNominal.value = toNumber(record.nominal);
 
     if (tipe === 'pengeluaran') {
+        refs.inputKuantitas.value = serializeQuantity(record.kuantitas);
+        refs.inputHargaSatuan.value = toNumber(record.hargaSatuan) > 0 ? String(toNumber(record.hargaSatuan)) : '';
+        refs.inputNominal.value = toNumber(record.nominal) > 0 ? String(toNumber(record.nominal)) : '';
         refs.inputKeluar.value = record.keterangan || '';
+        syncExpenseTotal();
     } else {
+        refs.inputNominal.value = toNumber(record.nominal);
         setSelectOptions(record.keterangan || '');
     }
 
@@ -602,10 +693,29 @@ function handleTableAction(event) {
 
 refs.riwayatBody.addEventListener('click', handleTableAction);
 refs.pengeluaranBody.addEventListener('click', handleTableAction);
+refs.inputKuantitas.addEventListener('input', syncExpenseTotal);
+refs.inputHargaSatuan.addEventListener('input', syncExpenseTotal);
 
 refs.form.addEventListener('submit', (event) => {
     event.preventDefault();
     clearNotif();
+
+    if (refs.formTipe.value === 'pengeluaran') {
+        syncExpenseTotal();
+        const hasKuantitas = toDecimal(refs.inputKuantitas.value) > 0;
+        const hasHargaSatuan = toNumber(refs.inputHargaSatuan.value) > 0;
+        const totalPengeluaran = toNumber(refs.inputNominal.value);
+
+        if (hasKuantitas !== hasHargaSatuan) {
+            setNotif('gagal', 'Isi kuantitas dan harga satuan sekaligus, atau kosongkan keduanya.');
+            return;
+        }
+
+        if (totalPengeluaran <= 0) {
+            setNotif('gagal', 'Total pengeluaran wajib lebih dari Rp 0.');
+            return;
+        }
+    }
 
     const originalText = refs.submitButton.textContent;
     refs.submitButton.disabled = true;
