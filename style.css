@@ -184,14 +184,19 @@ body::after {
 .meta-pill {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     padding: 10px 14px;
+    min-width: 156px;
+    min-height: 44px;
     border-radius: 999px;
     border: 1px solid rgba(22, 50, 79, 0.08);
     background: rgba(255, 255, 255, 0.74);
     color: var(--navy);
     font-size: 12px;
     font-weight: 800;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
     box-shadow: 0 10px 22px rgba(22, 50, 79, 0.06);
 }
 
@@ -426,6 +431,7 @@ body::after {
 
 .table-responsive {
     overflow: auto;
+    min-height: 270px;
 }
 
 table {
@@ -481,6 +487,50 @@ tr:last-child td {
     text-align: center;
     color: var(--muted);
     font-style: italic;
+}
+
+.loading-inline {
+    padding-top: 10px;
+    padding-bottom: 18px;
+}
+
+.loading-skeleton-row td {
+    padding-top: 18px;
+    padding-bottom: 18px;
+}
+
+.skeleton-line {
+    display: block;
+    width: 100%;
+    height: 14px;
+    border-radius: 999px;
+    background:
+        linear-gradient(90deg,
+            rgba(22, 50, 79, 0.06) 0%,
+            rgba(22, 50, 79, 0.12) 50%,
+            rgba(22, 50, 79, 0.06) 100%);
+    background-size: 220% 100%;
+    animation: shimmer 1.4s linear infinite;
+}
+
+.loading-skeleton-row td:nth-child(1) .skeleton-line {
+    width: 72%;
+}
+
+.loading-skeleton-row td:nth-child(2) .skeleton-line {
+    width: 64%;
+}
+
+.loading-skeleton-row td:nth-child(3) .skeleton-line {
+    width: 58%;
+}
+
+.loading-skeleton-row td:nth-child(4) .skeleton-line {
+    width: 86%;
+}
+
+.loading-skeleton-row td:nth-child(5) .skeleton-line {
+    width: 42%;
 }
 
 .btn {
@@ -749,6 +799,15 @@ input:focus,
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes shimmer {
+    from {
+        background-position: 200% 0;
+    }
+    to {
+        background-position: -20% 0;
     }
 }
 
