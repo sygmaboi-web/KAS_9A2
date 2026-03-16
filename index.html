@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kas Kelas 9A2</title>
-    <link rel="stylesheet" href="style.css?v=20260316-4">
+    <link rel="stylesheet" href="style.css?v=20260316-5">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 <body>
@@ -133,13 +133,15 @@
                         <tr>
                             <th>Tanggal</th>
                             <th>Beli Apa</th>
-                            <th>Nominal</th>
+                            <th>Kuantitas</th>
+                            <th>Harga / Satuan</th>
+                            <th>Total</th>
                             <th>Keterangan</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="data-pengeluaran">
-                        <tr><td colspan="5" class="loading">Memuat pengeluaran...</td></tr>
+                        <tr><td colspan="7" class="loading">Memuat pengeluaran...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -171,9 +173,21 @@
                             <input type="text" id="input-nama" name="nama" required>
                         </div>
 
-                        <div class="form-group">
-                            <label for="input-nominal">Nominal (Rp)</label>
+                        <div class="form-grid-2" id="group-detail-pengeluaran" style="display: none;">
+                            <div class="form-group">
+                                <label for="input-kuantitas">Kuantitas</label>
+                                <input type="number" id="input-kuantitas" name="kuantitas" min="0.01" step="0.01" placeholder="Contoh: 2" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="input-harga-satuan">Harga per Satuan (Rp)</label>
+                                <input type="number" id="input-harga-satuan" name="hargaSatuan" min="0" step="1" placeholder="Contoh: 15000" disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="group-nominal">
+                            <label id="label-nominal" for="input-nominal">Nominal (Rp)</label>
                             <input type="number" id="input-nominal" name="nominal" min="0" required>
+                            <p id="nominal-helper" class="field-helper">Isi nominal langsung untuk pemasukan. Untuk pengeluaran, total akan dihitung otomatis dari kuantitas x harga satuan.</p>
                         </div>
 
                         <div class="form-group" id="group-pemasukan">
@@ -206,7 +220,7 @@
                         <ul class="tips-list">
                             <li>Pilih minggu pembayaran yang sesuai saat input pemasukan.</li>
                             <li>Gunakan nama siswa yang konsisten agar rekap tidak terpecah.</li>
-                            <li>Cek kembali nominal sebelum menekan simpan.</li>
+                            <li>Untuk pengeluaran, isi kuantitas dan harga satuan agar total otomatis akurat.</li>
                         </ul>
                     </div>
 
@@ -225,6 +239,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=20260316-4"></script>
+    <script src="script.js?v=20260316-5"></script>
 </body>
 </html>
