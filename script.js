@@ -313,7 +313,7 @@ function bukaTab(namaTab) {
 function renderRekap(dataPemasukan) {
     const rekapMap = {};
     const urutanNama = [];
-
+    
     dataPemasukan.forEach((item) => {
         const nama = normalizeName(item.nama);
         if (!nama) {
@@ -645,5 +645,3 @@ window.bukaTab = bukaTab;
 window.siapkanFormTambah = siapkanFormTambah;
 
 muatData({ force: true, showLoader: true });
-
-
