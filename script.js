@@ -5,6 +5,9 @@ const LEGACY_WEEK_OPTIONS = ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'];
 const state = {
     pemasukan: [],
     pengeluaran: [],
+    hasLoadedOnce: false,
+    isFetching: false,
+    lastLoadedAt: 0,
     lookup: {
         pemasukan: {},
         pengeluaran: {}
@@ -79,6 +82,13 @@ function formatSyncTime(date) {
         hour: '2-digit',
         minute: '2-digit'
     }).format(date);
+}
+
+function setSyncBadge(text) {
+    if (!refs.syncBadge) {
+        return;
+    }
+    refs.syncBadge.textContent = text;
 }
 
 function toNumber(value) {
@@ -224,6 +234,33 @@ function updateSummaryCards(urutanNama, rekapMap, targetTotal) {
         : 'Belum ada progres pembayaran.';
 }
 
+function renderTableSkeleton(tbody, columns, label) {
+    const rows = Array.from({ length: 4 }, (_, index) => `
+        <tr class="loading-skeleton-row" style="animation-delay:${index * 60}ms">
+            ${Array.from({ length: columns }, () => `
+                <td><span class="skeleton-line"></span></td>
+            `).join('')}
+        </tr>
+    `).join('');
+
+    tbody.innerHTML = `
+        ${rows}
+        <tr>
+            <td colspan="${columns}" class="loading loading-inline">${label}</td>
+        </tr>
+    `;
+}
+
+function showLoadingState() {
+    renderTableSkeleton(refs.riwayatBody, 5, 'Memuat kas masuk...');
+    renderTableSkeleton(refs.pengeluaranBody, 5, 'Memuat pengeluaran...');
+    renderTableSkeleton(refs.rekapBody, 3, 'Menghitung rekap...');
+}
+
+function shouldRefreshSilently() {
+    return state.hasLoadedOnce && Date.now() - state.lastLoadedAt > 45000;
+}
+
 function renderActionButtons(row, tipe) {
     if (!state.supportsCrud) {
         return `
@@ -265,7 +302,11 @@ function bukaTab(namaTab) {
         if (activeButton) {
             activeButton.classList.add('active');
         }
-        muatData();
+        if (!state.hasLoadedOnce) {
+            muatData({ force: true, showLoader: true });
+        } else if (shouldRefreshSilently()) {
+            muatData({ silent: true });
+        }
     }
 }
 
@@ -384,10 +425,10 @@ function applyApiPayload(payload) {
         payload.meta || {}
     );
     state.supportsCrud = Number(state.meta.apiVersion || 0) >= 2;
+    state.hasLoadedOnce = true;
+    state.lastLoadedAt = Date.now();
 
-    if (refs.syncBadge) {
-        refs.syncBadge.textContent = `Sinkron ${formatSyncTime(new Date())}`;
-    }
+    setSyncBadge(`Sinkron ${formatSyncTime(new Date())}`);
 
     updateApiStatus();
     setSelectOptions('');
@@ -397,10 +438,29 @@ function applyApiPayload(payload) {
     renderRekap(state.pemasukan);
 }
 
-function muatData() {
-    refs.riwayatBody.innerHTML = '<tr><td colspan="5" class="loading">Memuat kas masuk...</td></tr>';
-    refs.pengeluaranBody.innerHTML = '<tr><td colspan="5" class="loading">Memuat pengeluaran...</td></tr>';
-    refs.rekapBody.innerHTML = '<tr><td colspan="3" class="loading">Menghitung rekap...</td></tr>';
+function muatData(options = {}) {
+    const {
+        force = false,
+        silent = false,
+        showLoader = false
+    } = options;
+
+    if (state.isFetching) {
+        return;
+    }
+
+    if (!force && state.hasLoadedOnce && !silent) {
+        return;
+    }
+
+    state.isFetching = true;
+
+    if (showLoader || (!state.hasLoadedOnce && !silent)) {
+        showLoadingState();
+        setSyncBadge('Memuat data...');
+    } else if (silent) {
+        setSyncBadge('Menyegarkan...');
+    }
 
     fetch(`${scriptURL}?_=${Date.now()}`, { cache: 'no-store' })
         .then((response) => {
@@ -414,12 +474,16 @@ function muatData() {
         })
         .catch((error) => {
             console.error(error);
-            if (refs.syncBadge) {
-                refs.syncBadge.textContent = 'Sinkron gagal';
+            setSyncBadge('Sinkron gagal');
+
+            if (!state.hasLoadedOnce) {
+                refs.riwayatBody.innerHTML = '<tr><td colspan="5" class="loading" style="color:#ef4444;">Gagal memuat data.</td></tr>';
+                refs.pengeluaranBody.innerHTML = '<tr><td colspan="5" class="loading" style="color:#ef4444;">Gagal memuat data.</td></tr>';
+                refs.rekapBody.innerHTML = '<tr><td colspan="3" class="loading" style="color:#ef4444;">Gagal memuat data.</td></tr>';
             }
-            refs.riwayatBody.innerHTML = '<tr><td colspan="5" class="loading" style="color:#ef4444;">Gagal memuat data.</td></tr>';
-            refs.pengeluaranBody.innerHTML = '<tr><td colspan="5" class="loading" style="color:#ef4444;">Gagal memuat data.</td></tr>';
-            refs.rekapBody.innerHTML = '<tr><td colspan="3" class="loading" style="color:#ef4444;">Gagal memuat data.</td></tr>';
+        })
+        .finally(() => {
+            state.isFetching = false;
         });
 }
 
@@ -500,7 +564,7 @@ function hapusData(row, tipe) {
         .then((payload) => {
             if (payload.status === 'sukses') {
                 window.alert(payload.pesan);
-                muatData();
+                muatData({ force: true, silent: true });
                 return;
             }
             window.alert(payload.pesan || 'Gagal menghapus data.');
@@ -559,6 +623,7 @@ refs.form.addEventListener('submit', (event) => {
             if (payload.status === 'sukses') {
                 setNotif('sukses', payload.pesan || 'Berhasil menyimpan data.');
                 const tujuanTab = refs.formTipe.value === 'pengeluaran' ? 'pengeluaran' : 'riwayat';
+                muatData({ force: true, silent: true });
                 setTimeout(() => {
                     clearNotif();
                     bukaTab(tujuanTab);
@@ -579,4 +644,4 @@ refs.form.addEventListener('submit', (event) => {
 window.bukaTab = bukaTab;
 window.siapkanFormTambah = siapkanFormTambah;
 
-muatData();
+muatData({ force: true, showLoader: true });
