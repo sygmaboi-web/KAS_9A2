@@ -16,6 +16,8 @@ const state = {
         apiVersion: 0,
         nominalPerMinggu: DEFAULT_WEEKLY_FEE,
         targetTotal: 0,
+        officialBalance: 0,
+        officialBalanceSource: '',
         weekOptions: []
     },
     supportsCrud: false
@@ -406,10 +408,18 @@ function renderPengeluaran(dataPengeluaran) {
 function renderSaldo(dataPemasukan, dataPengeluaran) {
     const totalPemasukan = dataPemasukan.reduce((sum, item) => sum + toNumber(item.nominal), 0);
     const totalPengeluaran = dataPengeluaran.reduce((sum, item) => sum + toNumber(item.nominal), 0);
-    const saldo = totalPemasukan - totalPengeluaran;
+    const transactionSaldo = totalPemasukan - totalPengeluaran;
+    const officialBalance = toNumber(state.meta.officialBalance);
+    const saldo = officialBalance > 0 ? officialBalance : transactionSaldo;
+    let detailText = `Masuk: ${formatRupiah(totalPemasukan)} | Keluar: ${formatRupiah(totalPengeluaran)}`;
+
+    if (officialBalance > 0) {
+        const sourceLabel = state.meta.officialBalanceSource || 'Laporan Kas';
+        detailText += ` | Saldo resmi: ${sourceLabel}`;
+    }
 
     refs.saldoTotal.textContent = formatRupiah(saldo);
-    refs.detailSaldo.textContent = `Masuk: ${formatRupiah(totalPemasukan)} | Keluar: ${formatRupiah(totalPengeluaran)}`;
+    refs.detailSaldo.textContent = detailText;
 }
 
 function applyApiPayload(payload) {
@@ -420,6 +430,8 @@ function applyApiPayload(payload) {
             apiVersion: 0,
             nominalPerMinggu: DEFAULT_WEEKLY_FEE,
             targetTotal: 0,
+            officialBalance: 0,
+            officialBalanceSource: '',
             weekOptions: []
         },
         payload.meta || {}
@@ -645,3 +657,4 @@ window.bukaTab = bukaTab;
 window.siapkanFormTambah = siapkanFormTambah;
 
 muatData({ force: true, showLoader: true });
+
